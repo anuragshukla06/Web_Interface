@@ -1,1 +1,18 @@
-<h1>Our Project Homepage!</h1>
+{% extends 'base.html' %}
+
+{% block title %}
+Homepage
+{% endblock %}
+
+{% block content %}
+    <form>
+      <div class="form-group">
+        <label for="FruitInput"><h4>Fruit</h4></label>
+        <input type="text" class="form-control" id="FruitInput" placeholder="Enter the fruit name to be stored">
+      </div>
+        <label for="EndDate"><h4>Storage Till.....</h4></label>
+        <input type="datetime-local" class="form-control" id="EndDate" placeholder="Number of days">
+      </div>
+    </form>
+
+{% endblock %}
