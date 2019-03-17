@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Homepage
+{% endblock %}
+
+{% block content %}
+  <div class="alert alert-success alert-dismissable" role="alert">
+      <h4 class="alert-heading">All set. This is just a confirmation :)</h4>
+      <p>The parameters for warehouse functionality will be:
+          <ul>
+              <li>Storage till: <b>{{end}}</b>
+              <li>Fruit to be stored: <b>{{fruit}}</b>
+              <li>Number of days of storage: <b>{{ diff }}</b>
+          </ul>
+
+      </p>
+      <hr>
+      <p class="mb-0">Please confirm the parameters to start the warehouse.</p>
+  </div>
+
+  <form method="post">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-primary">Confirm and start Warehouse!!</button>
+  </form>
+
+
+{% endblock %}

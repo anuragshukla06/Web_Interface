@@ -2,5 +2,6 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
-    path('', views.home, name="home")
+    path('', views.home, name="home"),
+    path('success/', views.afterValidateSuccess, name = "afterValidateSuccessUrl"),
 ]

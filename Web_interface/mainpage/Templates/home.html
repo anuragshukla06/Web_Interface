@@ -5,14 +5,21 @@ Homepage
 {% endblock %}
 
 {% block content %}
-    <form>
-      <div class="form-group">
-        <label for="FruitInput"><h4>Fruit</h4></label>
-        <input type="text" class="form-control" id="FruitInput" placeholder="Enter the fruit name to be stored">
-      </div>
-        <label for="EndDate"><h4>Storage Till.....</h4></label>
-        <input type="datetime-local" class="form-control" id="EndDate" placeholder="Number of days">
-      </div>
-    </form>
+  <form method="POST">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type="submit" class="btn btn-primary">Start Warehouse!</button>
+  </form>
+  {% if notKeepable %}
+    <div class="alert alert-danger alert-dismissable" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+      </button>
+      <h4 class="alert-heading">Too much days for storage :(</h4>
+      <p>You can store {{fruit}} only for {{expectedDays}}. You are exceeding the storage time by {{diff}} days.</p>
+      <hr>
+      <p class="mb-0">Please try to store fruit within {{expectedDays}} days to keep things fresh</p>
+    </div>
+  {% endif %}
 
 {% endblock %}
