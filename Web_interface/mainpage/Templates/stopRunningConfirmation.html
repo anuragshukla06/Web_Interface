@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Homepage
+{% endblock %}
+{% block content %}
+
+<div class="alert alert-danger alert-dismissable" role="alert">
+      <h4 class="alert-heading">Do you really want to stop the operation?</h4>
+      <p>
+          The monitoring and control for this program will be stopped. This action cannot be undone.
+      </p>
+    <hr>
+    <h2><a href="{%url 'stopRunningUrl' item_id%}">Yes, Stop the operation.</a></h2>
+  </div>
+{%endblock%}

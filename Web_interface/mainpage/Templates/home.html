@@ -10,7 +10,7 @@ Homepage
     {{form.as_p}}
     <button type="submit" class="btn btn-primary">Start Warehouse!</button>
   </form>
-  {% if notKeepable %}
+  {% if notKeepable == 1 %}
     <div class="alert alert-danger alert-dismissable" role="alert">
       <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
@@ -20,6 +20,60 @@ Homepage
       <hr>
       <p class="mb-0">Please try to store fruit within {{expectedDays}} days to keep things fresh</p>
     </div>
+  {% elif notKeepable == 2%}
+    <div class="alert alert-danger alert-dismissable" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+      </button>
+      <h4 class="alert-heading">Warehouse currently running.</h4>
+      <p>The ware house is currently in operation. Please discontinue the current operation first.</p>
+    </div>
   {% endif %}
+  <br>
+  <table class="table table-bordered">
+    <h3><b>Currently running operation appear here</b></h3>
+    <thead>
+      <tr>
+        <th scope="col"><center>Fruit Name</center></th>
+        <th scope="col"><center>Start Date</center></th>
+        <th scope="col"><center>End Date</center></th>
+        <th scope="col"><center>Action</center></th>
+      </tr>
+    </thead>
+    {% if runningEntry %}
+    <tr class="table-success">
+      <td><center>{{runningEntry.fruit}}</center></td>
+      <td><center>{{runningEntry.start_date}}</center></td>
+      <td><center>{{runningEntry.end_date}}</center></td>
+      <td><center><a href = "{%url 'stopRunningConfirmationUrl' runningEntry.id%}">Stop</a></center></td>
+    </tr>
+    {%else%}
+    <tr><h3>The warehouse is currently not in operation.</h3></tr>
+    {% endif %}
+  </table>
+
+  <table class="table">
+    <tr><b><h3>Recents</h3></b></tr>
+    <thead>
+      <tr>
+        <th scope="col"><center>Fruit Name</center></th>
+        <th scope="col"><center>Start Date</center></th>
+        <th scope="col"><center>End Date</center></th>
+      </tr>
+    </thead>
+    {%if AllInactiveEntry%}
+      {% for entry in AllInactiveEntry%}
+        <tr>
+          <td><center>{{entry.fruit}}</center></td>
+          <td><center>{{entry.start_date}}</center></td>
+          <td><center>{{entry.end_date}}</center></td>
+        </tr>
+      {%endfor%}
+    {%else%}
+      <tr>
+        <td>No Entry</td>
+      </tr>
+    {%endif%}
+  </table>
 
 {% endblock %}
