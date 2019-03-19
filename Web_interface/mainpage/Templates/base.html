@@ -18,24 +18,24 @@
   </head>
 
   <!--NavBAR-->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-      <a class="navbar-brand" href="#">Warehouse Management</a>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" href="{% url 'home' %}">Warehouse Management</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav">
           <li class="nav-item active">
-            <a class="nav-link" href="#">About <span class="sr-only">(current)</span></a>
+            <a class="nav-link" href="{% url 'home' %}">About <span class="sr-only">(current)</span></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">History</a>
+            <a class="nav-link" href="{% url 'home' %}">History</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Monitor</a>
+            <a class="nav-link" href="{% url 'home' %}">Monitor</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Control</a>
+            <a class="nav-link" href="{% url 'home' %}">Control</a>
           </li>
 
         </ul>
