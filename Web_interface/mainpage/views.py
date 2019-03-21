@@ -128,8 +128,12 @@ def Monitor(request):
     # #return response
     # return response
     # Send buffer in a http response the the browser with the mime type image/png set
-def MonitorCollectiveImage(request):
-    current = Entry.objects.get(running=True)
+def MonitorCollectiveImage(request, id):
+    id = int(id)
+    if id == -1:
+        current = Entry.objects.get(running=True)
+    else:
+        current = Entry.objects.get(pk=id)
     file_name = 'C:/media/test' + str(current.id) + '.csv'
     data = pd.read_csv(file_name)
     data['date'] = pd.to_datetime(data['date'])
@@ -150,3 +154,7 @@ def MonitorCollectiveImage(request):
     response = HttpResponse(buf.getvalue(), content_type='image/png')
     # return response
     return response
+
+def history(request):
+    items = Entry.objects.filter(running=False)
+    return render(request, 'history.html', {'items': items})
