@@ -110,6 +110,10 @@ def saveAndReceive(request, temperature, humidity, light):
     return HttpResponse(temperature + humidity+light)
 
 def Monitor(request):
+    try:
+        current = Entry.objects.get(running=True)
+    except Entry.DoesNotExist:
+        return HttpResponse("The warehouse currently is not in operation")
     return render(request, 'monitorBase.html')
     # current = Entry.objects.get(running=True)
     # file_name = 'C:/media/test' + str(current.id) + '.csv'
@@ -140,11 +144,14 @@ def MonitorCollectiveImage(request, id):
 
     fig = Figure()
     plt.subplot(3,1,1)
-    plt.plot(data['date'], data['temperature'])
+    plt.plot(data['date'], data['temperature'], label='temperature')
+    pylab.legend(loc='upper left')
     plt.subplot(3,1,2)
     plt.plot(data['date'], data['humidity'])
+    pylab.legend(loc='upper left')
     plt.subplot(3,1,3)
     plt.plot(data['date'], data['light'])
+    pylab.legend(loc='upper left')
 
     FigureCanvas(fig)
 
@@ -158,3 +165,10 @@ def MonitorCollectiveImage(request, id):
 def history(request):
     items = Entry.objects.filter(running=False)
     return render(request, 'history.html', {'items': items})
+
+def historyItemData(request, item_id):
+    item = Entry.objects.get(pk=item_id)
+    data = pd.read_csv(item.dataRecord)
+    data_html = data.to_html()
+    context = {'loaded_data': data_html}
+    return HttpResponse(data_html)

@@ -9,6 +9,7 @@
         <th scope="col"><center>Start Date</center></th>
         <th scope="col"><center>End Date</center></th>
         <th scope="col"><center>Graph</center></th>
+          <th scope="col"><center>Data</center></th>
       </tr>
     </thead>
     {% for item in items %}
@@ -17,6 +18,7 @@
       <td><center>{{item.start_date}}</center></td>
       <td><center>{{item.end_date}}</center></td>
       <td><center><a href="{%url 'MonitorCollectiveImageUrl' item.id%}">Graph</a></center></td>
+      <td><center><a href="{%url 'historyItemDataUrl' item.id%}">Data</a></center></td>
 
 
     </tr>
