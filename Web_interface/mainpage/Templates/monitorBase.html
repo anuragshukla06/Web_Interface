@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>This is the live plot</h2>
+<h4>Please refresh the page to regenerate the new plot</h4>
+<img src="{%url 'MonitorCollectiveImageUrl'%}" class="rounded float-left" height = "700" width="700">
+{% endblock %}

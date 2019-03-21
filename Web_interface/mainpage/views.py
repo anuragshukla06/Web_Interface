@@ -2,9 +2,17 @@ from django.shortcuts import render,redirect
 from .forms import EntryForm
 from .models import PreSavedData, Entry
 from django.http import HttpResponse
-import datetime
+from django.core.files import File
+import datetime, os, django
+import pandas as pd
+import matplotlib.pyplot as plt
+from matplotlib import pylab
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+import io, PIL, PIL.Image, time
 
 theEntryForm = None
+f = None
 # Create your views here.
 def home(request):
     entryForm = EntryForm()
@@ -50,9 +58,13 @@ def home(request):
 
 def afterValidateSuccess(request):
     global theEntryForm
+    global f
     if request.method == "POST":
         theEntryForm.save()
-        current = Entry.objects.latest('start_date')
+        current = Entry.objects.latest('id')
+        f = open('C:/media/test' + str(current.id) + '.csv', 'w')
+        # myFile = File(f)
+        # current.dataRecord = myFile
         current.running = True
         current.save()
         return redirect(home)
@@ -81,5 +93,60 @@ def stopRunningConfirmation(request, item_id):
 def stopRunning(request, item_id):
     entry = Entry.objects.get(pk=item_id)
     entry.running = False
+    f = open('C:/media/test' + str(entry.id) + '.csv', 'r')
+    myFile = File(f)
+    entry.dataRecord = myFile
     entry.save()
     return redirect(home)
+
+def saveAndReceive(request, temperature, humidity, light):
+    current = Entry.objects.get(running = True)
+    now = datetime.datetime.now()
+    file_name = 'C:/media/test' + str(current.id) + '.csv'
+    f = open(file_name, 'a+')
+    if os.stat(file_name).st_size == 0:
+        f.write('temperature'+',humidity' + ',light' + ',date' + '\n')
+    f.write(temperature+ ',' + humidity+','+light +","+ str(now) + '\n')
+    return HttpResponse(temperature + humidity+light)
+
+def Monitor(request):
+    return render(request, 'monitorBase.html')
+    # current = Entry.objects.get(running=True)
+    # file_name = 'C:/media/test' + str(current.id) + '.csv'
+    # data = pd.read_csv(file_name)
+    # data['date'] = pd.to_datetime(data['date'])
+    #
+    # fig = Figure()
+    # plt.plot(data['date'], data['temperature'])
+    #
+    # FigureCanvas(fig)
+    #
+    # buf = io.BytesIO()
+    # plt.savefig(buf, format='png')
+    # plt.close(fig)
+    # response = HttpResponse(buf.getvalue(), content_type='image/png')
+    # #return response
+    # return response
+    # Send buffer in a http response the the browser with the mime type image/png set
+def MonitorCollectiveImage(request):
+    current = Entry.objects.get(running=True)
+    file_name = 'C:/media/test' + str(current.id) + '.csv'
+    data = pd.read_csv(file_name)
+    data['date'] = pd.to_datetime(data['date'])
+
+    fig = Figure()
+    plt.subplot(3,1,1)
+    plt.plot(data['date'], data['temperature'])
+    plt.subplot(3,1,2)
+    plt.plot(data['date'], data['humidity'])
+    plt.subplot(3,1,3)
+    plt.plot(data['date'], data['light'])
+
+    FigureCanvas(fig)
+
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    plt.clf()
+    response = HttpResponse(buf.getvalue(), content_type='image/png')
+    # return response
+    return response
