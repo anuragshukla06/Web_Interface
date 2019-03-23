@@ -10,3 +10,8 @@ class EntryForm(forms.ModelForm):
     class Meta:
         model = Entry
         fields = ['fruit', 'end_date', 'running']
+
+class AlterParametersForm(forms.Form):
+    temperature = forms.IntegerField()
+    relative_humidity = forms.IntegerField()
+    light = forms.IntegerField()

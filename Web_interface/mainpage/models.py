@@ -17,3 +17,9 @@ class PreSavedData(models.Model):
     temperature = models.IntegerField()
     relative_humidity = models.IntegerField()
     numberOfDays = models.IntegerField()
+
+class CurrentParameters(models.Model):
+    fruit = models.CharField(max_length=200)
+    temperature =models.IntegerField()
+    relative_humidity = models.IntegerField()
+    light = models.IntegerField(default=0)

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+{% if noParameters == 1 %}
+    <div class="alert alert-danger" role="alert">
+      <h2>The Warehouse is not in operation</h2>
+    </div>
+{% else %}
+    <form method="POST">
+        {% csrf_token %}
+        {{form.as_p}}
+        <button type="submit" class="btn btn-primary">Change</button>
+    </form>
+    <br>
+    <hr>
+    <div class="alert alert-info" role="alert">
+      The current parameters of warehouse are:
+        <ul>
+            <li>Temperature: <b>{{current.temperature}}</b></li>
+            <li>Relative Humidity: <b>{{current.relative_humidity}}</b></li>
+            <li>Light: <b>{{current.light}}</b></li>
+        </ul>
+    </div>
+{% endif %}
+{% endblock %}

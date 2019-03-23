@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
-from .forms import EntryForm
-from .models import PreSavedData, Entry
+from .forms import EntryForm, AlterParametersForm
+from .models import PreSavedData, Entry, CurrentParameters
 from django.http import HttpResponse
 from django.core.files import File
 import datetime, os, django
@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from matplotlib import pylab
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-import io, PIL, PIL.Image, time
+import io
 
 theEntryForm = None
 f = None
@@ -66,6 +66,19 @@ def afterValidateSuccess(request):
         # myFile = File(f)
         # current.dataRecord = myFile
         current.running = True
+        #----------------------------------
+        try:
+            CurrentParameters.objects.all().delete()
+        except:
+            p = 1 #code has to be written
+
+        preSaved = PreSavedData.objects.get(fruit = current.fruit)
+
+        currentParameters = CurrentParameters(temperature=preSaved.temperature,
+                                              fruit = preSaved.fruit,
+                                              relative_humidity = preSaved.relative_humidity)
+        currentParameters.save()
+        #--------------------------------------
         current.save()
         return redirect(home)
 
@@ -96,18 +109,25 @@ def stopRunning(request, item_id):
     f = open('C:/media/test' + str(entry.id) + '.csv', 'r')
     myFile = File(f)
     entry.dataRecord = myFile
+    CurrentParameters.objects.all().delete()
     entry.save()
     return redirect(home)
 
 def saveAndReceive(request, temperature, humidity, light):
-    current = Entry.objects.get(running = True)
-    now = datetime.datetime.now()
-    file_name = 'C:/media/test' + str(current.id) + '.csv'
-    f = open(file_name, 'a+')
-    if os.stat(file_name).st_size == 0:
-        f.write('temperature'+',humidity' + ',light' + ',date' + '\n')
-    f.write(temperature+ ',' + humidity+','+light +","+ str(now) + '\n')
-    return HttpResponse(temperature + humidity+light)
+    try:
+        current = Entry.objects.get(running = True)
+        now = datetime.datetime.now()
+        file_name = 'C:/media/test' + str(current.id) + '.csv'
+        f = open(file_name, 'a+')
+        if os.stat(file_name).st_size == 0:
+            f.write('temperature'+',humidity' + ',light' + ',date' + '\n')
+        f.write(temperature+ ',' + humidity+','+light +","+ str(now) + '\n')
+        currentParameters = CurrentParameters.objects.all()[0]
+        return HttpResponse(" ".join([str(currentParameters.temperature),
+                                     str(currentParameters.relative_humidity),
+                                      str(currentParameters.light)]))
+    except Entry.DoesNotExist:
+        return HttpResponse(" ".join(["-1", "-1", "-1"]))
 
 def Monitor(request):
     try:
@@ -172,3 +192,30 @@ def historyItemData(request, item_id):
     data_html = data.to_html()
     context = {'loaded_data': data_html}
     return HttpResponse(data_html)
+
+def control(request):
+    controlForm = AlterParametersForm()
+    parameters = CurrentParameters.objects.all()
+    currentParameters = -1
+    if len(parameters) > 0:
+        currentParameters = parameters[0]
+    if request.method == "POST":
+        form = AlterParametersForm(request.POST)
+        if form.is_valid():
+            temperature = form.cleaned_data["temperature"]
+            relative_humidity = form.cleaned_data["relative_humidity"]
+            light = form.cleaned_data["light"]
+            currentParameters.relative_humidity = relative_humidity
+            currentParameters.temperature = temperature
+            currentParameters.light = light
+            currentParameters.save()
+            return redirect(control)
+    else:
+        if currentParameters == -1:
+            return render(request, "control.html", {"form": controlForm, "current": currentParameters, "noParameters": 1})
+
+        return render(request, "control.html", {"form": controlForm, "current": currentParameters, "noParameters": 0})
+
+
+
+
