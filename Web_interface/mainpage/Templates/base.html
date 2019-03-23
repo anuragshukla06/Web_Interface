@@ -18,8 +18,8 @@
   </head>
 
   <!--NavBAR-->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <a class="navbar-brand" href="#">Warehouse Management</a>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <a class="navbar-brand" href="{%url 'home'%}">Warehouse Management</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -29,13 +29,13 @@
             <a class="nav-link" href="#">About <span class="sr-only">(current)</span></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">History</a>
+            <a class="nav-link" href="{%url 'History'%}">History</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Monitor</a>
+            <a class="nav-link" href="{%url 'MonitorUrl'%}">Monitor</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Control</a>
+            <a class="nav-link" href="{%url 'ControlUrl'%}">Control</a>
           </li>
 
         </ul>
