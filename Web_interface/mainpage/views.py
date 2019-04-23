@@ -114,6 +114,7 @@ def stopRunning(request, item_id):
     return redirect(home)
 
 def saveAndReceive(request, temperature, humidity, light):
+
     try:
         current = Entry.objects.get(running = True)
         now = datetime.datetime.now()
@@ -217,5 +218,6 @@ def control(request):
         return render(request, "control.html", {"form": controlForm, "current": currentParameters, "noParameters": 0})
 
 
-
+def about(request):
+    return render(request, "index.html", {})
 

@@ -12,6 +12,7 @@ urlpatterns = [
     path('monitorCollectiveImage/<id>', views.MonitorCollectiveImage, name="MonitorCollectiveImageUrl"),
     path('History/<int:item_id>', views.historyItemData, name="historyItemDataUrl"),
     path('Control/', views.control, name="ControlUrl"),
+    path('about',views.about, name="about")
     # path('monitorHumidityImage/', views.MonitorHumidityImage, name="MonitorHumidityImageUrl"),
     # path('monitorLightImage/', views.MonitorLightImage, name="MonitorLightImageUrl"),
     # path('monitorTemperatureImage/', views.MonitorTemperatureImage, name="MonitorTemperatureImageUrl")
