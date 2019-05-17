@@ -2,6 +2,7 @@
 <!--[if (gte IE 9)|!(IE)]><!--><html class="no-js" lang="en"> <!--<![endif]-->
 <head>
 
+	{% load static %}
    <!--- basic page needs
    ================================================== -->
    <meta charset="utf-8">
@@ -15,14 +16,14 @@
 
  	<!-- CSS
    ================================================== -->
-   <link rel="stylesheet" href="css/base.css">
-   <link rel="stylesheet" href="css/vendor.css">  
-   <link rel="stylesheet" href="css/main.css">  
+   <link rel="stylesheet" href="{% static 'main/css/base.css' %}">
+   <link rel="stylesheet" href="{% static 'main/css/vendor.css' %}">
+   <link rel="stylesheet" href="{% static 'main/css/main.css' %}">
 
    <!-- script
    ================================================== -->
-	<script src="js/modernizr.js"></script>
-	<script src="js/pace.min.js"></script>
+	<script src="{% static 'main/js/modernizr.js' %}"></script>
+	<script src="{% static 'main/js/pace.min.js' %}"></script>
 
    <!-- favicons
 	================================================== -->
@@ -82,7 +83,7 @@
 		   	<div class="row">
 		   		<div class="col-twelve">		   			
 			  		
-			  				<h3 class="animate-intro">Our Project is</h3>
+			  				<h3 class="animate-intro">Our Project</h3>
 				  			<h1 class="animate-intro">
 							Smart Fruit Warehouse <br>
 							Monitoring System 

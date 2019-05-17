@@ -8,11 +8,17 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib import pylab
 from matplotlib.figure import Figure
+from django.utils import timezone
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import io
 
 theEntryForm = None
 f = None
+nowD = None
+endD = None
+diffD = None
+emergency = False
+prevEmergencyTemp = None
 # Create your views here.
 def home(request):
     entryForm = EntryForm()
@@ -21,14 +27,17 @@ def home(request):
         runningEntry = Entry.objects.get(running = True)
     except Entry.DoesNotExist:
         runningEntry = None
+        global emergency
+        emergency = False
 
 
     if request.method == "POST":
         form = EntryForm(request.POST)
         if form.is_valid():
+            global nowD, endD
             endD = form.cleaned_data["end_date"]
             thisFruit = form.cleaned_data["fruit"]
-            nowD = datetime.datetime.now()
+            nowD = timezone.now()
             diff = endD.date()-nowD.date()
             diff = diff.days
             preSavedData = PreSavedData.objects.get(fruit = thisFruit)
@@ -53,8 +62,15 @@ def home(request):
         else:
             HttpResponse("OOPS Something went wrong. Check your internet connection.")
 
+    global diffD
+    nowD = timezone.now()
+    if emergency:
+        notKeepable = 3
+        return render(request, 'home.html', {"form": entryForm, 'AllInactiveEntry': AllInactiveEntry,
+                                             "runningEntry": runningEntry, "endD": endD, "diffD": diffD,
+                                             "notKeepable": notKeepable})
     return render(request, 'home.html', {"form": entryForm, 'AllInactiveEntry': AllInactiveEntry,
-                                         "runningEntry": runningEntry})
+                                         "runningEntry": runningEntry, "endD": endD, "diffD": diffD})
 
 def afterValidateSuccess(request):
     global theEntryForm
@@ -104,6 +120,10 @@ def stopRunningConfirmation(request, item_id):
     return render(request, 'stopRunningConfirmation.html', {'item_id': item_id})
 
 def stopRunning(request, item_id):
+    stopRunningHelper(item_id)
+    return redirect(home)
+
+def stopRunningHelper(item_id):
     entry = Entry.objects.get(pk=item_id)
     entry.running = False
     f = open('C:/media/test' + str(entry.id) + '.csv', 'r')
@@ -111,23 +131,37 @@ def stopRunning(request, item_id):
     entry.dataRecord = myFile
     CurrentParameters.objects.all().delete()
     entry.save()
-    return redirect(home)
 
 def saveAndReceive(request, temperature, humidity, light):
 
     try:
         current = Entry.objects.get(running = True)
-        now = datetime.datetime.now()
+
+        ##if the storage time expires
+        nowD = timezone.now()
+        if endD is not None and endD <= nowD:
+            stopRunningHelper(current.id)
+            return HttpResponse(" ".join(["-1", "-1", "-1"]))
+
+        currentParameters = CurrentParameters.objects.all()[0]
+
+        global emergency
+        if abs(int(currentParameters.temperature)-int(temperature)) >= 15:
+            emergency = True
+        else:
+            emergency = False
+
         file_name = 'C:/media/test' + str(current.id) + '.csv'
         f = open(file_name, 'a+')
         if os.stat(file_name).st_size == 0:
             f.write('temperature'+',humidity' + ',light' + ',date' + '\n')
-        f.write(temperature+ ',' + humidity+','+light +","+ str(now) + '\n')
-        currentParameters = CurrentParameters.objects.all()[0]
+        f.write(temperature+ ',' + humidity+','+light +","+ str(datetime.datetime.now()) + '\n')
+
         return HttpResponse(" ".join([str(currentParameters.temperature),
                                      str(currentParameters.relative_humidity),
                                       str(currentParameters.light)]))
     except Entry.DoesNotExist:
+        emergency = False
         return HttpResponse(" ".join(["-1", "-1", "-1"]))
 
 def Monitor(request):
@@ -166,12 +200,18 @@ def MonitorCollectiveImage(request, id):
     fig = Figure()
     plt.subplot(3,1,1)
     plt.plot(data['date'], data['temperature'], label='temperature')
+    plt.xlabel("Time")
+    plt.ylabel("Temperature in °C")
     pylab.legend(loc='upper left')
     plt.subplot(3,1,2)
     plt.plot(data['date'], data['humidity'])
+    plt.xlabel("Time")
+    plt.ylabel("Relative Humidity")
     pylab.legend(loc='upper left')
     plt.subplot(3,1,3)
     plt.plot(data['date'], data['light'])
+    plt.xlabel("Time")
+    plt.ylabel("Light in Lux")
     pylab.legend(loc='upper left')
 
     FigureCanvas(fig)
