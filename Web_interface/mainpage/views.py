@@ -13,7 +13,7 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import io
 
 theEntryForm = None
-f = None
+OFFSET = 15
 nowD = None
 endD = None
 diffD = None
@@ -146,7 +146,7 @@ def saveAndReceive(request, temperature, humidity, light):
         currentParameters = CurrentParameters.objects.all()[0]
 
         global emergency
-        if abs(int(currentParameters.temperature)-int(temperature)) >= 15:
+        if abs(int(currentParameters.temperature)-int(temperature)) >= OFFSET:
             emergency = True
         else:
             emergency = False
