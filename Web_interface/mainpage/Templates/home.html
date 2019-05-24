@@ -5,7 +5,6 @@ Homepage
 {% endblock %}
 
 {% block content %}
-<div class="container">
     <form method="POST">
         {% csrf_token %}
         {{form.as_p}}
@@ -112,6 +111,5 @@ Homepage
         </tr>
         {%endif%}
     </table>
-</div>
 
 {% endblock %}
